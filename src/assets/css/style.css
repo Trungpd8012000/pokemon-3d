@@ -1,0 +1,16 @@
+:root {
+  --bg-dark: #212121;
+  --text-light: #f3f3f3;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  width: 100%;
+}

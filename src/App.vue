@@ -1,26 +1,62 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js App" />
+  <main-screen v-if="statusGame === 'default'" @onReady="handleOnReady" />
+  <interact-screen
+    v-if="statusGame === 'match'"
+    :cardsContext="settings.cardsContext"
+    @onFinish="handleFinish"
+  />
+  <result-screen
+    v-if="statusGame === 'result'"
+    @onStartAgain="handleStartAgain"
+    :timer="timer"
+  />
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import MainScreen from "./components/MainScreen.vue";
+import InteractScreen from "./components/InteractScreen.vue";
+import { sortRandom } from "./utils/array";
+import ResultScreen from "./components/ResultScreen.vue";
 
 export default {
-  name: "App",
+  data() {
+    return {
+      settings: {
+        amountOfCards: 0,
+        cardsContext: [],
+        startedAt: null,
+      },
+      statusGame: "default",
+      timer: 0,
+    };
+  },
   components: {
-    HelloWorld,
+    MainScreen,
+    InteractScreen,
+    ResultScreen,
+  },
+  methods: {
+    handleOnReady(amount) {
+      this.settings.amountOfCards = amount;
+      this.statusGame = "match";
+      const firstCards = Array.from(
+        { length: amount / 2 },
+        (_, index) => index + 1
+      );
+      const secondCards = [...firstCards];
+      const cards = [...firstCards, ...secondCards];
+      this.settings.cardsContext = sortRandom(cards);
+      this.settings.startedAt = new Date().getTime();
+    },
+    handleFinish() {
+      this.timer = new Date().getTime() - this.settings.startedAt;
+      console.log(this.settings.startedAt);
+
+      this.statusGame = "result";
+    },
+    handleStartAgain() {
+      this.statusGame = "default";
+    },
   },
 };
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
